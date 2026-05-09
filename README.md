@@ -1,201 +1,186 @@
-# MedBuddy AI - Simple Voice Medication Reminder
+# MedBuddy AI
 
-A simple voice-first medication reminder app using browser Web Speech API and Groq (free LLM).
+MedBuddy AI is a voice-enabled medication reminder prototype. It lets a patient speak or type a message, sends the message to a small Express API, and returns a short response that can be read aloud in the browser.
 
-## 🎯 Features
+This project is intended for development and demonstration. It is not a medical device and should not be used as a substitute for professional medical advice, diagnosis, or treatment.
 
-- **Voice-First Interface**: Speak naturally using browser's built-in speech recognition
-- **AI-Powered Conversations**: Groq AI provides intelligent responses
-- **Medication Tracking**: Visual checklist with real-time updates
-- **Elderly-Friendly UI**: Large fonts, high contrast, simple interface
-- **No Complex Setup**: Works in Chrome/Edge with just API keys
+## Features
 
-## 🛠 Tech Stack
+- Voice input through the browser Web Speech API
+- Spoken responses through browser speech synthesis
+- Text input as a fallback when speech recognition is unavailable
+- Medication checklist with taken and due states
+- Express API for chat requests
+- Groq-backed response generation
+- Mock patient and medication data for local testing
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Backend**: Express.js, TypeScript
-- **Voice**: Browser Web Speech API (no setup needed)
-- **AI**: Groq SDK (free LLM API)
-- **Storage**: In-memory (mock data)
+## Architecture
 
-## 📋 Prerequisites
+```text
+Browser
+  |
+  | Speech input, text input, checklist actions
+  v
+Next.js application
+  |
+  | POST /api/chat
+  v
+Express server
+  |
+  | Groq SDK
+  v
+Groq API
 
-- Node.js 18+ and npm
-- Groq API key (free)
-- Chrome or Edge browser (for Web Speech API)
+Mock medication data is stored in the frontend during local development.
+```
 
-## 🚀 Quick Start
+## Technology
 
-### Step 1: Get Groq API Key (FREE)
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- Express
+- Groq SDK
+- Browser Web Speech API
 
-1. Go to [https://console.groq.com/](https://console.groq.com/)
-2. Sign up for a free account
-3. Navigate to "API Keys" section
-4. Click "Create API Key"
-5. Copy your API key (starts with `gsk_`)
+## Requirements
 
-### Step 2: Install Dependencies
+- Node.js 18 or newer
+- npm
+- Chrome or Edge for speech recognition support
+- Groq API key
+
+## Setup
+
+Install the frontend dependencies from the project root:
 
 ```bash
-# Install frontend dependencies
 npm install
+```
 
-# Install backend dependencies
+Install the server dependencies:
+
+```bash
 cd server
 npm install
 cd ..
 ```
 
-### Step 3: Configure Environment Variables
+Create a `.env` file in the project root:
 
-**Frontend** - Create `.env` in root directory:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
-**Backend** - Create `.env` in `server/` directory:
+Create a `.env` file in `server/`:
+
 ```env
 PORT=3001
 GROQ_API_KEY=gsk_your_api_key_here
 ```
 
-### Step 4: Run the Application
+## Running Locally
 
-**Terminal 1 - Backend:**
+Start the API server:
+
 ```bash
 cd server
 npm run dev
 ```
 
-You should see:
-```
-MedBuddy AI Server running on port 3001
-```
+Start the frontend in a second terminal:
 
-**Terminal 2 - Frontend:**
 ```bash
 npm run dev
 ```
 
-You should see:
+Open the app at:
+
+```text
+http://localhost:3000
 ```
-- ready started server on 0.0.0.0:3000
-```
 
-### Step 5: Use the App
+## Basic Use
 
-1. Open [http://localhost:3000](http://localhost:3000)
-2. Click the big green "Talk to MedBuddy" button
-3. Allow microphone access when prompted
-4. Speak naturally (e.g., "I took my Metformin")
-5. MedBuddy will respond with voice and text
+1. Open the app in Chrome or Edge.
+2. Allow microphone access if you want to use voice input.
+3. Speak or type a medication-related message.
+4. Review the assistant response and the medication checklist.
 
-## 📁 Project Structure
+Example messages:
 
-```
+- `I took my Metformin`
+- `What medication is due now?`
+- `Tell me about my medication schedule`
+
+## Project Structure
+
+```text
 medbuddy-ai/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx          # Main voice chat interface
-│   │   ├── layout.tsx        # Root layout
-│   │   └── globals.css       # Global styles
-│   ├── data/
-│   │   └── medications.ts    # Mock medication data
-│   └── types/
-│       └── speech.d.ts       # Web Speech API types
-├── server/
-│   └── src/
-│       └── index.ts          # Express server with Groq
-├── package.json
-└── server/package.json
+|-- app/                  Next.js application routes
+|-- src/
+|   |-- data/             Mock patient and medication data
+|   |-- types/            Browser speech type definitions
+|   |-- utils/            Shared frontend utilities
+|   `-- app/test/         Local test page
+|-- server/
+|   |-- index.js          Express server used by npm run dev
+|   `-- src/              TypeScript server source and utilities
+|-- package.json          Frontend scripts and dependencies
+`-- README.md
 ```
 
-## 🧪 Testing
+## Scripts
 
-### Test Backend
+Frontend:
+
+```bash
+npm run dev
+npm run build
+npm start
+npm run lint
+```
+
+Server:
+
+```bash
+cd server
+npm run dev
+npm start
+```
+
+## API Checks
+
+Health check:
+
 ```bash
 curl http://localhost:3001/health
 ```
 
-### Test Chat API
+Chat request:
+
 ```bash
 curl -X POST http://localhost:3001/api/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Hello", "conversationHistory": [], "medications": []}'
+  -d "{\"message\":\"I took my Metformin\"}"
 ```
 
-## 💬 Example Conversations
+## Troubleshooting
 
-- "I took my Metformin" → Marks Metformin as taken
-- "What medications do I need to take?" → Lists due medications
-- "Tell me about my medications" → Provides medication information
-- "I feel dizzy" → Provides helpful response
+If microphone input does not work, use Chrome or Edge, check browser microphone permissions, and run the app on `localhost` or HTTPS.
 
-## 🎨 UI Features
+If the frontend cannot connect to the server, confirm that the server is running on port `3001` and that `NEXT_PUBLIC_API_URL` is set correctly.
 
-- **Green Button**: Ready to talk
-- **Red Button**: Currently listening
-- **Medication Checklist**: 
-  - Green border = Taken
-  - Yellow border = Due now
-  - Gray border = Not due yet
-- **Conversation History**: Shows all messages with timestamps
+If the server reports a missing Groq API key, confirm that `GROQ_API_KEY` is present in `server/.env`, then restart the server.
 
-## 🔧 Available Scripts
+## Security Notes
 
-### Frontend
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
+- Do not commit `.env` files.
+- Keep API keys outside source control.
+- Replace mock data and in-memory state before considering production use.
+- Add appropriate review, logging, monitoring, and clinical safeguards for any real healthcare workflow.
 
-### Backend
-- `npm run dev` - Start with hot reload
-- `npm run build` - Compile TypeScript
-- `npm start` - Start production server
-
-## 🐛 Troubleshooting
-
-### Microphone not working
-- Use Chrome or Edge browser
-- Check browser permissions (Settings → Privacy → Microphone)
-- Make sure you're on localhost or HTTPS
-
-### "Cannot connect to server"
-- Make sure backend is running on port 3001
-- Check `NEXT_PUBLIC_API_URL` in `.env`
-
-### "Groq API key not configured"
-- Check `GROQ_API_KEY` in `server/.env`
-- Restart backend server after changing `.env`
-
-### Speech recognition not working
-- Use Chrome or Edge (best support)
-- Check browser console for errors
-- Make sure microphone permission is granted
-
-## 📝 Mock Data
-
-The app comes with mock data for **Mr. Sharma**:
-- **Metformin** (500mg) - 9 AM
-- **Amlodipine** (5mg) - 2 PM
-- **Aspirin** (75mg) - 9 PM
-
-## 🔒 Security Notes
-
-- Never commit `.env` files
-- Keep API keys secure
-- For production, use proper secret management
-
-## 📚 Resources
-
-- [Groq API Documentation](https://console.groq.com/docs)
-- [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
-- [Next.js Documentation](https://nextjs.org/docs)
-
-## 📄 License
+## License
 
 MIT
-
----
-
-**Ready to use!** Just get your Groq API key and start talking to MedBuddy! 🎤
